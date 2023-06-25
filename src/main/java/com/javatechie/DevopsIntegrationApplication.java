@@ -11,7 +11,7 @@ public class DevopsIntegrationApplication {
 
 	@GetMapping("/get")
 	public String message(){
-		return "welcome to emre, uçtan uca pipeline oluşturuldu";
+		return "welcome to emre, uçtan uca pipeline oluşturuldu, testler eklendi";
 	}
 
 	public static void main(String[] args) {

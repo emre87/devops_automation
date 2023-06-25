@@ -1,39 +1,51 @@
 pipeline {
     agent any
-    tools{
-        maven 'maven_3_5_0'
+    tools {
+        maven 'maven3'
     }
-    stages{
-        stage('Build Maven'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
-                sh 'mvn clean install'
+    stages {
+        stage('Build Maven') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/emre87/devops_automation']]])
+                bat 'mvn clean install'
             }
         }
-        stage('Build docker image'){
-            steps{
-                script{
-                    sh 'docker build -t javatechie/devops-integration .'
+
+
+
+        stage('Build docker image') {
+            steps {
+                script {
+                    bat 'docker build -t emredemiralay/devops-integration .'
                 }
             }
         }
-        stage('Push image to Hub'){
-            steps{
-                script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u javatechie -p ${dockerhubpwd}'
+
+     stage('Push image to Hub') {
+    steps {
+        script {
+            withCredentials([string(credentialsId: 'docherhub-pwd', variable: 'dockerhubpwd')]) {
+                bat "docker login -u emredemiralay -p %dockerhubpwd%"
+            }
+            bat "docker push emredemiralay/devops-integration"
+        }
+    }
+    }
+
+
+    stage('Deploy to k8s') {
+    steps {
+        script {
+            kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8configpwd')
+            }
+        }
+    }
+}
+
+
 
 }
-                   sh 'docker push javatechie/devops-integration'
-                }
-            }
-        }
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
-                }
-            }
-        }
-    }
-}
+
+
+
+
