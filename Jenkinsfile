@@ -8,6 +8,7 @@ pipeline {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/emre87/devops_automation']]])
                 bat 'mvn clean install'
+                bat 'mvn spring-boot:run'
             }
         }
 
