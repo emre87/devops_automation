@@ -13,6 +13,13 @@ pipeline {
         }
 
 
+        stage('Test') {
+                    steps {
+                        bat 'mvn test'
+                    }
+                }
+
+
 
         stage('Build docker image') {
             steps {
